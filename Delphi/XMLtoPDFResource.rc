@@ -1,0 +1,2 @@
+libeay32 RCDATA "Win32\\Release\\libeay32.dll"
+ssleay32 RCDATA "Win32\\Release\\ssleay32.dll"

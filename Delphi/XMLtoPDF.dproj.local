@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2020/05/20 12:16:42.000.822,=C:\Users\Franc\Documents\Embarcadero\Studio\Projects\Unit22.pas</Transaction>
+    <Transaction>2020/05/20 12:20:01.000.044,C:\Cursos\Exportar Xml to PDF\uXMLtoPDF.pas=C:\Users\Franc\Documents\Embarcadero\Studio\Projects\Unit22.pas</Transaction>
+    <Transaction>2020/05/20 12:20:01.000.044,C:\Cursos\Exportar Xml to PDF\uXMLtoPDF.dfm=C:\Users\Franc\Documents\Embarcadero\Studio\Projects\Unit22.dfm</Transaction>
+    <Transaction>2020/05/20 12:20:10.000.683,C:\Cursos\Exportar Xml to PDF\XMLtoPDF.dproj=C:\Users\Franc\Documents\Embarcadero\Studio\Projects\Project20.dproj</Transaction>
+    <Transaction>2020/05/20 14:28:43.000.441,=C:\Cursos\Exportar Xml to PDF\Win32\Release\libeay32.dll</Transaction>
+    <Transaction>2020/05/20 14:28:43.000.455,=C:\Cursos\Exportar Xml to PDF\Win32\Release\ssleay32.dll</Transaction>
+  </Transactions>
+</BorlandProject>
