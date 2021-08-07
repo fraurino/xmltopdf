@@ -1,4 +1,4 @@
-# xmltopdf
+# Converta o XML(doc. fiscal) em PDF(danfe)
 Export XML to PDF (Exportar XML para PDF)
 
 Exporte os arquivos fiscais a partir do XML para Danfe em PDF;
