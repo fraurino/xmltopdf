@@ -4,7 +4,7 @@ interface
 
 uses
 IniFiles, ShellAPI, FileCtrl , Windows, Messages, SysUtils, Variants, Classes, Graphics,
-Controls, Forms, Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls,
+Controls, Forms, Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls,System.Zip, System.IOUtils ,
 
 {uses clientdataset}
 Data.DB, Datasnap.DBClient, Datasnap.Provider,
@@ -18,7 +18,8 @@ ACBrMail, ACBrNFeDANFeRLClass,ACBrDANFCeFortesFr, ACBrPosPrinter, ACBrDFeReport,
 ACBrIntegrador, ACBrNFeDANFEFR,pcnConversaoNFe,ACBrDANFCeFortesFrA4,  ACBrSAT, ACBrSATExtratoClass,
 ACBrSATExtratoReportClass, ACBrSATExtratoFortesFr, ACBrMDFeDAMDFeClass, ACBrMDFeDAMDFeRLClass, ACBrMDFe,
 ACBrNFSe, ACBrNFSeDANFSeClass, ACBrNFSeDANFSeRLClass, ACBrCTeDACTEClass, ACBrCTeDACTeRLClass, ACBrCTe,
-ACBrBPe, ACBrGNRE2, ACBrGNREGuiaClass, ACBrGNReGuiaRLClass,  ACBrNFSeDANFSeFR, pcnRetConsReciDFe ;
+ACBrBPe, ACBrGNRE2, ACBrGNREGuiaClass, ACBrGNReGuiaRLClass,  ACBrNFSeDANFSeFR, pcnRetConsReciDFe,
+  Vcl.Menus ;
 
 type
 TfrmGerador = class(TForm)
@@ -28,7 +29,6 @@ TfrmGerador = class(TForm)
   lblNotifica: TLabel;
   Panel2: TPanel;
   dadosanexos: TGroupBox;
-  ListBox1: TListBox;
   ProgressBar1: TProgressBar;
   GroupBox1: TGroupBox;
   CheckBox1: TCheckBox;
@@ -38,6 +38,15 @@ TfrmGerador = class(TForm)
     tipodados: TComboBox;
     GroupBox2: TGroupBox;
     Memo1: TMemo;
+    acbrnota: TACBrNFe;
+    MainMenu1: TMainMenu;
+    Exportar1: TMenuItem;
+    ExportarXML1: TMenuItem;
+    PageControl1: TPageControl;
+    tsArquivos: TTabSheet;
+    ListBox1: TListBox;
+    Chaves: TTabSheet;
+    chavesdeacessos: TMemo;
   procedure btnBuscarClick(Sender: TObject);
   procedure btnLimparAnexosClick(Sender: TObject);
   procedure btnExportarClick(Sender: TObject);
@@ -47,6 +56,8 @@ TfrmGerador = class(TForm)
   procedure FormShow(Sender: TObject);
   procedure CheckBox1Click(Sender: TObject);
   procedure btnDirClick(Sender: TObject);
+    procedure chavesdeacessosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 private
   { Private declarations }
 public
@@ -158,8 +169,8 @@ procedure TfrmGerador.btnBuscarClick(Sender: TObject);
 var
   i : integer;
   OpenDialog1 : TOpenDialog;
+  FileNameWithoutExt: string;
 Begin
-
 
      if tipodados.ItemIndex <> -1  then
      begin
@@ -167,11 +178,9 @@ Begin
           Arquivos := TStringList.Create;
           ListBox1.Clear;
 
-
           OpenDialog1 := TOpenDialog.Create(self);
           {configurando para selecionar varios arquivos  [ofAllowMultiSelect = true ] }
           OpenDialog1.Options := [ofHideReadOnly,ofAllowMultiSelect,ofEnableSizing];
-
             case tipodados.itemIndex of
               0:
                 begin
@@ -220,7 +229,6 @@ Begin
                 end;
             end;
 
-
           OpenDialog1.InitialDir := 'c:\' ;
           {abrindo tela de seleção de arquivos}
           if (OpenDialog1.Execute) then
@@ -236,6 +244,14 @@ Begin
                   dadosanexos.Caption := '[Anexos] quantidade de arquivos ' + IntToStr(OpenDialog1.Files.Count) ;
                   Arquivos.Add(OpenDialog1.Files.Strings[i]);
                   ListBox1.Items.Add( OpenDialog1.Files.Strings[i]);
+
+                  // Extrai o nome do arquivo completo
+                  FileNameWithoutExt := ExtractFileName(OpenDialog1.Files.Strings[i]);
+                  // Remove a extensão do arquivo
+                  FileNameWithoutExt := ChangeFileExt(FileNameWithoutExt, '');
+                  // Adiciona ao Memo
+                  chavesdeacessos.Lines.Add(acbrutil.OnlyNumber(FileNameWithoutExt));
+
                   //ListBox1.Items.Add( ExtractFileName(OpenDialog1.Files.Strings[i]));
                 end;
                 ProgressBar1.Position := 0 ;
@@ -250,7 +266,7 @@ Begin
         except
           on E: Exception do
           begin
-            raise Exception.Create('Falha no envio do(s) arquivo(s)');
+             ShowMessage('erro de arquivo:'+ e.Message);
           end;
         end
      end
@@ -313,7 +329,12 @@ Sua_Thread : TThread ;
   danfeNFSe    : TACBrNFSeDANFSeRL;
   danfeMDFe    : TACBrMDFeDAMDFeRL;
   danfeSat     : TACBrSATExtratoFortes;
-
+  I       : integer;
+  vChave  : String;
+  vMes    : string;
+  vcnpj   : string;
+  a       : integer;
+  erro : string ;
 begin
   if  (edtDiretorio.Text = '') and (CheckBox1.Checked = true) then
   begin
@@ -324,21 +345,9 @@ begin
     abort;
   end;
 
-  Sua_Thread := TThread.CreateAnonymousThread(procedure
-  begin
-    TThread.Synchronize(nil, procedure
-    var
-        I       : integer;
-        vChave  : String;
-        vMes    : string;
-        vcnpj   : string;
-        a       : integer;
-
-    begin
-        try
+      try
           try
             {abrindo tela de seleção de arquivos}
-
                 ProgressBar1.Max := ListBox1.Items.Count ;
                 ProgressBar1.Position := 0 ;
                 {enviando apenas várias imagens e 1 mensagem de texto}
@@ -430,7 +439,11 @@ begin
 
 
                     case tipodados.itemIndex of
-                      0: ACBrNFe1.NotasFiscais.LoadFromFile(ListBox1.Items[i]);
+                      0:
+                      begin
+                        ACBrNFe1.Configuracoes.Geral.VersaoDF := ve200;
+                        ACBrNFe1.NotasFiscais.LoadFromFile(ListBox1.Items[i]);
+                      end;
                       1: ACBrSAT1.CFe.LoadFromFile(ListBox1.Items[i]);
                       2: ACBrMDFe1.Manifestos.LoadFromFile(ListBox1.Items[i]);
                       3: ACBrNFSe1.NotasFiscais.LoadFromFile(ListBox1.Items[i]);
@@ -933,17 +946,12 @@ begin
             on E: Exception do
             begin
               btnExportar.Enabled := True;
-              raise Exception.Create('Falha no envio do(s) arquivo(s)');
+              showmessage('erro de arquivo[s]:'+ e.Message);
             end;
           end
         finally
           {finalizando , seleciona o componente ed_num.text}
-
         end;
-    end);
-  end);
-  Sua_Thread.FreeOnTerminate := True;
-  Sua_Thread.Start;
 end;
 
 procedure TfrmGerador.btnLimparAnexosClick(Sender: TObject);
@@ -963,6 +971,19 @@ begin
  end;
 end;
 
+
+procedure TfrmGerador.chavesdeacessosKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  // Verifica se Ctrl+A foi pressionado
+  if (Key = Ord('A')) and (ssCtrl in Shift) then
+  begin
+    // Seleciona todo o texto no Memo
+    chavesdeacessos.SelectAll;
+    // Previne o processamento adicional da tecla
+    Key := 0;
+  end;
+end;
 
 procedure TfrmGerador.CheckBox1Click(Sender: TObject);
 begin
@@ -999,8 +1020,29 @@ begin
  fs.Free;
 end;
 
+procedure ExtractSchemasZip;
+var
+  lUnZipper: TZipFile;
+  ExecutablePath: string;
+  FileName, ExtractedFileName: string;
+  ZipFilePath: string;
+begin
+    lUnZipper := TZipFile.Create;
+    ExecutablePath := ExtractFilePath(Application.ExeName);
+    ZipFilePath := ExecutablePath + 'schemas.zip';
+    try
+      lUnZipper.Open(ZipFilePath, zmRead);
+      lUnZipper.ExtractAll(ExtractFilePath(ExecutablePath));
+      lUnZipper.Close;
+    finally
+      FreeAndNil(lUnZipper);
+    end;
+end;
+
 procedure TfrmGerador.FormCreate(Sender: TObject);
 begin
+
+  ExtractSchemasZip ;
 
   if not FileExists( ExtractFilePath(Application.ExeName) + 'libeay32.dll' ) then
   FileDLL('libeay32');

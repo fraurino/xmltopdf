@@ -12,11 +12,10 @@ object frmGerador: TfrmGerador
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
+  Menu = MainMenu1
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -26,11 +25,12 @@ object frmGerador: TfrmGerador
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 742
+    ExplicitTop = 457
+    ExplicitWidth = 638
     object btnBuscar: TSpeedButton
-      Left = 282
+      Left = 402
       Top = 0
-      Width = 180
+      Width = 120
       Height = 34
       Cursor = crHandPoint
       Hint = 'Localizar e selecionar arquivos xml'
@@ -148,12 +148,12 @@ object frmGerador: TfrmGerador
       OnClick = btnBuscarClick
       OnMouseEnter = btnBuscarMouseEnter
       OnMouseLeave = btnBuscarMouseLeave
-      ExplicitLeft = 242
+      ExplicitLeft = 442
     end
     object btnExportar: TSpeedButton
-      Left = 462
+      Left = 522
       Top = 0
-      Width = 180
+      Width = 120
       Height = 34
       Cursor = crHandPoint
       Hint = 'Exportar dos arquivos xml para pdf'
@@ -272,13 +272,13 @@ object frmGerador: TfrmGerador
       OnClick = btnExportarClick
       OnMouseEnter = btnBuscarMouseEnter
       OnMouseLeave = btnBuscarMouseLeave
-      ExplicitLeft = 442
+      ExplicitLeft = 542
     end
     object lblNotifica: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 222
+      Width = 252
       Height = 28
       Align = alLeft
       Caption = '------------------------------------------'
@@ -290,6 +290,7 @@ object frmGerador: TfrmGerador
       ParentFont = False
       Layout = tlCenter
       Visible = False
+      ExplicitHeight = 21
     end
   end
   object Panel2: TPanel
@@ -300,9 +301,8 @@ object frmGerador: TfrmGerador
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = -3
-    ExplicitWidth = 742
+    ExplicitWidth = 638
+    ExplicitHeight = 457
     object dadosanexos: TGroupBox
       Left = 0
       Top = 71
@@ -317,40 +317,17 @@ object frmGerador: TfrmGerador
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      ExplicitLeft = 198
-      ExplicitTop = 187
-      ExplicitWidth = 637
-      ExplicitHeight = 351
-      object ListBox1: TListBox
-        Left = 2
-        Top = 15
-        Width = 638
-        Height = 257
-        Align = alClient
-        BevelInner = bvNone
-        BevelOuter = bvNone
-        BorderStyle = bsNone
-        Color = clInfoBk
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ItemHeight = 13
-        ParentFont = False
-        TabOrder = 0
-        ExplicitWidth = 633
-        ExplicitHeight = 317
-      end
+      ExplicitWidth = 638
+      ExplicitHeight = 386
       object ProgressBar1: TProgressBar
         Left = 2
         Top = 368
         Width = 638
         Height = 17
         Align = alBottom
-        TabOrder = 2
-        ExplicitTop = 332
-        ExplicitWidth = 633
+        TabOrder = 1
+        ExplicitTop = 367
+        ExplicitWidth = 634
       end
       object GroupBox2: TGroupBox
         Left = 2
@@ -359,7 +336,9 @@ object frmGerador: TfrmGerador
         Height = 96
         Align = alBottom
         Caption = 'log'
-        TabOrder = 1
+        TabOrder = 0
+        ExplicitTop = 271
+        ExplicitWidth = 634
         object Memo1: TMemo
           Left = 2
           Top = 15
@@ -369,9 +348,57 @@ object frmGerador: TfrmGerador
           BorderStyle = bsNone
           ScrollBars = ssVertical
           TabOrder = 0
-          ExplicitLeft = 1
-          ExplicitTop = 14
-          ExplicitHeight = 88
+          ExplicitWidth = 630
+        end
+      end
+      object PageControl1: TPageControl
+        Left = 2
+        Top = 15
+        Width = 638
+        Height = 257
+        Cursor = crHandPoint
+        ActivePage = tsArquivos
+        Align = alClient
+        TabOrder = 2
+        object tsArquivos: TTabSheet
+          Caption = 'Arquivos'
+          object ListBox1: TListBox
+            Left = 0
+            Top = 0
+            Width = 630
+            Height = 229
+            Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
+            Color = clInfoBk
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ItemHeight = 13
+            ParentFont = False
+            TabOrder = 0
+            ExplicitLeft = 106
+            ExplicitTop = 23
+            ExplicitWidth = 634
+            ExplicitHeight = 256
+          end
+        end
+        object Chaves: TTabSheet
+          Caption = 'Chaves'
+          ImageIndex = 1
+          object chavesdeacessos: TMemo
+            Left = 0
+            Top = 0
+            Width = 630
+            Height = 229
+            Align = alClient
+            ScrollBars = ssHorizontal
+            TabOrder = 0
+            OnKeyDown = chavesdeacessosKeyDown
+          end
         end
       end
     end
@@ -383,7 +410,7 @@ object frmGerador: TfrmGerador
       Align = alTop
       Caption = 'Diret'#243'rio dos arquivos para exporta'#231#227'o'
       TabOrder = 0
-      ExplicitWidth = 742
+      ExplicitWidth = 638
       object btnDir: TSpeedButton
         Left = 421
         Top = 35
@@ -491,6 +518,32 @@ object frmGerador: TfrmGerador
           'CTE'
           'BPE'
           'GNRE')
+      end
+    end
+  end
+  object acbrnota: TACBrNFe
+    Configuracoes.Geral.SSLLib = libNone
+    Configuracoes.Geral.SSLCryptLib = cryNone
+    Configuracoes.Geral.SSLHttpLib = httpNone
+    Configuracoes.Geral.SSLXmlSignLib = xsNone
+    Configuracoes.Geral.FormatoAlerta = 'TAG:%TAGNIVEL% ID:%ID%/%TAG%(%DESCRICAO%) - %MSG%.'
+    Configuracoes.Geral.VersaoDF = ve200
+    Configuracoes.Arquivos.OrdenacaoPath = <>
+    Configuracoes.WebServices.UF = 'SP'
+    Configuracoes.WebServices.AguardarConsultaRet = 0
+    Configuracoes.WebServices.QuebradeLinha = '|'
+    Configuracoes.RespTec.IdCSRT = 0
+    Left = 208
+    Top = 191
+  end
+  object MainMenu1: TMainMenu
+    Left = 136
+    Top = 183
+    object Exportar1: TMenuItem
+      Caption = 'Exporta'#231#227'o'
+      object ExportarXML1: TMenuItem
+        Caption = 'Exportar XML'
+        OnClick = btnExportarClick
       end
     end
   end
